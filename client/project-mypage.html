@@ -1,0 +1,180 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+    <script src="https://code.jquery.com/jquery-3.7.1.js"
+        integrity="sha256-eKhayi8LEQwp4NKxN+CfCh+3qOVUtJn3QNZ0TciWLP4=" crossorigin="anonymous"></script>
+    <script src="https://unpkg.com/vue@3/dist/vue.global.js"></script>
+    <style>
+        body {
+            font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #f0f4ff, #e9f7f7);
+            margin: 0;
+            padding: 0;
+        }
+
+        #container {
+            width: 500px;
+            margin: 50px auto;
+            padding: 20px;
+            background: white;
+            border-radius: 12px;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+            animation: fadeIn 0.6s ease-in-out;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-bottom: 20px;
+        }
+
+        th,
+        td {
+            padding: 12px 15px;
+            text-align: left;
+            border-bottom: 1px solid #e0e0e0;
+        }
+
+        th {
+            width: 120px;
+            background: #f9fafb;
+            font-weight: 600;
+            color: #333;
+            border-right: 1px solid #e0e0e0;
+        }
+
+        td {
+            color: #555;
+        }
+
+        tr:last-child td {
+            border-bottom: none;
+        }
+
+        /* 버튼 영역 */
+        #container div {
+            text-align: right;
+        }
+
+        a button {
+            padding: 8px 16px;
+            margin-left: 5px;
+            border: none;
+            border-radius: 6px;
+            background: #4a90e2;
+            color: white;
+            font-size: 14px;
+            cursor: pointer;
+            transition: 0.3s;
+        }
+
+        a button:hover {
+            background: #357ABD;
+        }
+
+        /* 애니메이션 */
+        @keyframes fadeIn {
+            from {
+                opacity: 0;
+                transform: translateY(10px);
+            }
+
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+    </style>
+
+</head>
+
+<body>
+    <div id="app">
+        <div id="container">
+            <table>
+                <tr>
+                    <th>아이디</th>
+                    <td>{{info.USERID}}</td>
+                </tr>
+                <tr>
+                    <th>이름</th>
+                    <td>{{info.NAME}}</td>
+                </tr>
+                <tr>
+                    <th>생년월일</th>
+                    <td>{{info.BIRTH}}</td>
+                </tr>
+                <tr>
+                    <th>닉네임</th>
+                    <td>{{info.NICKNAME}}</td>
+                </tr>
+                <tr>
+                    <th>주소</th>
+                    <td>{{info.ADDRESS}}</td>
+                </tr>
+                <tr>
+                    <th>휴대전화</th>
+                    <td>{{info.PHONE}}</td>
+                </tr>
+                <tr>
+                    <th>이메일</th>
+                    <td>{{info.EMAIL}}</td>
+                </tr>
+            </table>
+            <div>
+                <a href="#"><button>정보 수정</button></a>
+                <a href="project-main.html"><button>메인으로</button></a>
+            </div>
+        </div>
+    </div>
+</body>
+
+</html>
+
+<script>
+    const app = Vue.createApp({
+        data() {
+            return {
+                // 변수 - (key : value)
+                userId: "",
+                userStatus: "",
+                info: {}
+            };
+        },
+        methods: {
+            // 함수(메소드) - (key : function())
+            fnInfo: function () {
+                let self = this;
+                let param = {
+                    userId: self.userId
+                };
+                $.ajax({
+                    url: "http://localhost:3009/user/info",
+                    dataType: "json",
+                    type: "GET",
+                    data: param,
+                    success: function (data) {
+                        self.info = data.info;
+                    }
+                });
+            }
+        }, // methods
+        mounted() {
+            // 처음 시작할 때 실행되는 부분
+            let self = this;
+            self.userId = sessionStorage.getItem("sessionId");
+            self.userStatus = sessionStorage.getItem("sessionStatus");
+            if (self.userId == null) {
+                alert("로그인 후 이용할 수 있습니다");
+                location.href = "project-login.html";
+            }
+            self.fnInfo();
+        }
+    });
+
+    app.mount('#app');
+</script>
